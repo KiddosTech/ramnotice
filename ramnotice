@@ -1,0 +1,19 @@
+#!/bin/bash
+
+THRESHOLD=80
+
+USED=$(free | awk '/Mem:/ { printf("%.0f"), $3/$2 * 100 }')
+
+clear
+echo "======================"
+echo "   RAMNOTICE v0.2"
+echo "======================"
+echo "RAM terpakai: $USED%"
+
+if [ "$USED" -ge "$THRESHOLD" ]; then
+    echo "⚠️  PERINGATAN: RAM hampir penuh!"
+else
+    echo "✅ RAM aman"
+fi
+
+
