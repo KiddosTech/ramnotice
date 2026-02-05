@@ -1,0 +1,5 @@
+Package: ramnotice
+Version: 1.0
+Architecture: all
+Maintainer: Ahmad Ilham Kurniawan <ahmadilhambinkurniawan@gmail.com>
+Descriptiom: Simple RAM usage notifier and Lighwight for minimal Devices

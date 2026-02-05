@@ -1,0 +1,82 @@
+#!/bin/bash
+
+CONFIG="$HOME/.config/ramnotice.conf"
+THRESHOLD=80
+
+# Fungsi tampil logo ASCII RAMNOTICE
+print_logo() {
+cat << "EOF"
+/$$$$$$$   /$$$$$$  /$$      /$$ /$$   /$$  /$$$$$$  /$$$$$$$$ /$$$$$$  /$$$$$$  /$$$$$$$$
+| $$__  $$ /$$__  $$| $$$    /$$$| $$$ | $$ /$$__  $$|__  $$__/|_  $$_/ /$$__  $$| $$_____/
+| $$  \ $$| $$  \ $$| $$$$  /$$$$| $$$$| $$| $$  \ $$   | $$     | $$  | $$  \__/| $$      
+| $$$$$$$/| $$$$$$$$| $$ $$/$$ $$| $$ $$ $$| $$  | $$   | $$     | $$  | $$      | $$$$$   
+| $$__  $$| $$__  $$| $$  $$$| $$| $$  $$$$| $$  | $$   | $$     | $$  | $$      | $$__/   
+| $$  \ $$| $$  | $$| $$\  $ | $$| $$\  $$$| $$  | $$   | $$     | $$  | $$    $$| $$      
+| $$  | $$| $$  | $$| $$ \/  | $$| $$ \  $$|  $$$$$$/   | $$    /$$$$$$|  $$$$$$/| $$$$$$$$
+|__/  |__/|__/  |__/|__/     |__/|__/  \__/ \______/    |__/   |______/ \______/ |________/
+EOF
+}
+
+# Load config
+if [ -f "$CONFIG" ]; then
+  source "$CONFIG"
+else
+  echo "ENABLED=1" > "$CONFIG"
+fi
+
+get_ram_usage() {
+  free | awk '/Mem:/ {printf("%.0f"), $3/$2 * 100}'
+}
+
+notify() {
+  if command -v notify-send >/dev/null; then
+    notify-send "RAM Notice" "⚠️ RAM usage is ${USED}%"
+  else
+    echo "⚠️ RAM usage is ${USED}%"
+  fi
+}
+
+show_help() {
+  echo "Usage: ramnotice {on|off|status|help}"
+  echo
+  echo "Commands:"
+  echo "  on       Enable RAM notice"
+  echo "  off      Disable RAM notice"
+  echo "  status   Show current status"
+  echo "  help     Show this help message"
+  echo
+  echo "© 2026 by Ahmad Ilham Kurniawan"
+}
+
+case "$1" in
+  on)
+    echo "ENABLED=1" > "$CONFIG"
+    echo "RAM Notice enabled"
+    ;;
+  off)
+    echo "ENABLED=0" > "$CONFIG"
+    echo "RAM Notice disabled"
+    ;;
+  status)
+    [ "$ENABLED" = "1" ] && echo "RAM Notice status: ON" || echo "RAM Notice status: OFF"
+    ;;
+  help|"")
+    print_logo
+    show_help
+    ;;
+  *)
+    USED=$(get_ram_usage)
+    echo "RAM used: $USED%"
+    if [ "$ENABLED" = "1" ] && [ "$USED" -ge "$THRESHOLD" ]; then
+      notify
+    fi
+    ;;
+esac
+
+
+
+
+
+
+
+
